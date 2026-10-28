@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: split_test
+          POSTGRES_USER: split
+          POSTGRES_PASSWORD: split
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U split -d split_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+
+      - name: Create database schema
+        run: psql -h localhost -U split -d split_test -f db/schema.sql
+        env:
+          PGPASSWORD: split
+
+      - name: Run tests
+        run: ./mvnw -B test
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/split_test
+          SPRING_DATASOURCE_USERNAME: split
+          SPRING_DATASOURCE_PASSWORD: split
