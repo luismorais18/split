@@ -6,6 +6,7 @@ import java.util.List;
 public record ErrorResponse(
         int status,
         String error,
+        String code,
         String message,
         List<String> details,
-        Instant timestamp) {}       
+        Instant timestamp) {}     

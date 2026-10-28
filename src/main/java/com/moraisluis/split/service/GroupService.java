@@ -13,6 +13,8 @@ import com.moraisluis.split.dto.group.GroupRequest;
 import com.moraisluis.split.dto.group.GroupResponse;
 import com.moraisluis.split.dto.group.GroupUpdateRequest;
 import com.moraisluis.split.dto.member.AddMemberRequest;
+import com.moraisluis.split.exception.ApiException;
+import com.moraisluis.split.exception.ErrorCode;
 import com.moraisluis.split.model.Group;
 import com.moraisluis.split.model.User;
 import com.moraisluis.split.repository.GroupRepository;
@@ -70,22 +72,14 @@ public class GroupService {
     }
 
     @Transactional
-    public GroupResponse removeMember(UUID id, UUID memberId) {
-        Group group = getOrThrow(id);
+    public GroupResponse removeMember(UUID groupId, UUID memberId) {
+        Group group = getOrThrow(groupId);
         User user = getUserOrThrow(memberId);
         if (!group.removeMember(user)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "User is not in the group");
+            throw new ApiException(ErrorCode.NOT_A_MEMBER);
         }
         return GroupResponse.from(group);
     }
-
-    
-
-    
-
-
-
-
 
     private Group getOrThrow(UUID id) {
         return groupRepository.findById(id)
