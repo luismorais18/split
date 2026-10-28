@@ -76,7 +76,7 @@ public class GroupService {
         Group group = getOrThrow(groupId);
         User user = getUserOrThrow(memberId);
         if (!group.removeMember(user)) {
-            throw new ApiException(ErrorCode.ALREADY_A_MEMBER);
+            throw new ApiException(ErrorCode.NOT_A_MEMBER);
         }
         return GroupResponse.from(group);
     }

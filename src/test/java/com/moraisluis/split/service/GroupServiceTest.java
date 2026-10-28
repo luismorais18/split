@@ -22,6 +22,8 @@ import org.springframework.web.server.ResponseStatusException;
 import com.moraisluis.split.dto.group.GroupRequest;
 import com.moraisluis.split.dto.group.GroupUpdateRequest;
 import com.moraisluis.split.dto.member.AddMemberRequest;
+import com.moraisluis.split.exception.ApiException;
+import com.moraisluis.split.exception.ErrorCode;
 import com.moraisluis.split.model.Group;
 import com.moraisluis.split.model.User;
 import com.moraisluis.split.repository.GroupRepository;
@@ -68,11 +70,10 @@ class GroupServiceTest {
         when(groupRepository.findById(groupId)).thenReturn(Optional.of(group));
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+        ApiException ex = assertThrows(ApiException.class,
                 () -> service.removeMember(groupId, userId));
 
-        assertEquals(404, ex.getStatusCode().value());
-        assertEquals("User is not in the group", ex.getReason());
+        assertEquals(ErrorCode.NOT_A_MEMBER, ex.code());
     }
 
     @Test
