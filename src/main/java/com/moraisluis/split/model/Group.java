@@ -14,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "groups")
@@ -32,8 +33,12 @@ public class Group {
     private Set<User> members = new HashSet<>();
 
     protected Group() {}
+    
     public Group(String name) { this.name = name; }
     
+    public Group(UUID id) {
+        this.id = id; 
+    }
     public UUID getId() {
         return id;
     }
