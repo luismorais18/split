@@ -41,13 +41,13 @@ public class ExpenseService {
     public ExpenseResponse create(ExpenseRequest request) {
 
         User user = userRepository.findById(request.paidById())
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT, "User not found"));
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
         Group group = groupRepository.findById(request.groupId())
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT, "Group not found"));
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Group not found"));
         
         Set<User> members = group.getMembers();
-        
+
         if (!members.contains(user)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User is not a member of the group");
         }
